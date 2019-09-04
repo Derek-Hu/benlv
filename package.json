@@ -2,6 +2,7 @@
   "name": "myapp",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://derek-hu.github.io/benlv",
   "description": "",
   "scripts": {
     "deploy": "npm run compile && npm run build && gh-pages -d build",

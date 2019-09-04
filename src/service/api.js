@@ -1,11 +1,12 @@
 import axios from 'axios';
+import { Config } from '~/constant/config';
 
 const getToken = () => {
   return sessionStorage.getItem('token');
 };
 
 const instance = axios.create({
-  baseURL: '/',
+  baseURL: Config.apiBase,
   headers: { Authorization: getToken() }
 });
 

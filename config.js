@@ -1,16 +1,10 @@
 const config = {
   env: {
     local: {
-      apiBase: "/"
-    },
-    dev: {
-      apiBase: "/"
-    },
-    demo: {
-      apiBase: "/"
+      apiBase: ""
     },
     production: {
-      apiBase: "/"
+      apiBase: "/benlv"
     }
   }
 };
