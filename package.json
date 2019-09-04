@@ -4,16 +4,15 @@
   "private": true,
   "description": "",
   "scripts": {
+    "deploy": "npm run compile && npm run build && gh-pages -d build",
     "compile": "node compile/index.js",
     "authors": "git log --format='%aE=%aN\n' -- . | sort -u > AUTHORS.txt",
-    "build-dev": "cross-env APP_NAME=dev npm run build-react",
-    "build-demo": "cross-env APP_NAME=demo npm run build-react",
-    "build-production": "cross-env APP_NAME=production GENERATE_SOURCEMAP=false npm run build-react",
-    "build-react": "react-app-rewired build",
+    "build": "cross-env APP_NAME=production GENERATE_SOURCEMAP=false react-app-rewired build",
     "start:dev": "APP_NAME=dev npm start",
     "start:production": "APP_NAME=production npm start",
     "start": "react-app-rewired start",
-    "sort-package-json": "sort-package-json"
+    "sort-package-json": "sort-package-json",
+    "github": "gh-pages -d build"
   },
   "husky": {
     "hooks": {
@@ -46,6 +45,7 @@
     "cross-env": "^5.2.0",
     "customize-cra": "^0.2.11",
     "directory-named-webpack-plugin": "^4.0.1",
+    "gh-pages": "^2.1.1",
     "git-rev-sync": "^1.8.0",
     "jsonml-tools": "github:mckamey/jsonml",
     "jsonml.js": "^0.1.0",

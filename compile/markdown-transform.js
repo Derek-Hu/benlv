@@ -37,10 +37,7 @@ const handle = function(folderPath, generatedPath) {
         .toString(16);
       const contentUrl = path.relative(folderPath, file).replace(/[\/\\]/, "_") + "." + pathHash + ".json";
 
-      console.log("contentUrl", contentUrl);
       const ml = MT(fs.readFileSync(file));
-      console.log("file", file, ml.meta);
-      // const htmls = JsonML.toHTMLText(ml.content);
       const originalDatas = {
         metas: ml.meta,
         path: filePath,

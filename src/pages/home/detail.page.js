@@ -34,7 +34,6 @@ export default class extends React.Component {
 
   render() {
     const { pageInfo } = this.state;
-    console.log(pageInfo);
     return (
       <>
         {pageInfo && pageInfo.metas ? <h1>{pageInfo.metas.title}</h1> : null}

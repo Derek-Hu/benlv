@@ -14,9 +14,6 @@ function onSelect(value, history) {
   }
 }
 
-function getRandomInt(max, min = 0) {
-  return Math.floor(Math.random() * (max - min + 1)) + min; // eslint-disable-line no-mixed-operators
-}
 const MaxMatch = 6;
 function searchResult(query, allData) {
   const titleMatchs = [];
