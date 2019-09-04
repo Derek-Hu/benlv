@@ -1,16 +1,16 @@
 const config = {
   env: {
     local: {
-      apiBase: "//localhost:3000/mock",
+      apiBase: "/"
     },
     dev: {
-      apiBase: "//dev.com/gw/borrow-api",
+      apiBase: "/"
     },
     demo: {
-      apiBase: "//demo.com/gw/borrow-api",
+      apiBase: "/"
     },
     production: {
-      apiBase: "//production.com/gw/borrow-api",
+      apiBase: "/"
     }
   }
 };

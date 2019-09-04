@@ -1,0 +1,142 @@
+[
+  "article",
+  ["h1", "State"],
+  [
+    "ol",
+    [
+      "li",
+      [
+        "p",
+        "只能在构造器",
+        ["code", "constructor"],
+        "中初始化",
+        ["code", "state"]
+      ]
+    ]
+  ],
+  [
+    "pre",
+    { "lang": "js" },
+    [
+      "code",
+      "constructor(props) {\n    super(props);\n    this.state = {date: new Date()};\n}"
+    ]
+  ],
+  [
+    "ol",
+    [
+      "li",
+      [
+        "p",
+        "修改",
+        ["code", "state"],
+        "需调用",
+        ["code", "setState"],
+        "方法，直接修",
+        ["code", "state"],
+        "并不能导致界面重绘，更新UI"
+      ]
+    ]
+  ],
+  [
+    "pre",
+    { "lang": "js" },
+    [
+      "code",
+      "// Wrong\nthis.state.comment = 'Hello';\n\n// Correct\nthis.setState({comment: 'Hello'});"
+    ]
+  ],
+  [
+    "ol",
+    [
+      "li",
+      [
+        "p",
+        "可以单独更新",
+        ["code", "state"],
+        "中某一个状态信息，React将合并",
+        ["code", "state"],
+        "的各个更新"
+      ]
+    ]
+  ],
+  [
+    "pre",
+    { "lang": "js" },
+    [
+      "code",
+      "constructor(props) {\n    super(props);\n    this.state = {\n      posts: [],\n      comments: []\n    };\n}\ncomponentDidMount() {\n    fetchPosts().then(response => {\n        this.setState({\n            posts: response.posts\n        });\n    });\n\n    fetchComments().then(response => {\n        this.setState({\n            comments: response.comments\n        });\n    });\n}"
+    ]
+  ],
+  [
+    "ol",
+    ["li", ["p", ["code", "state"], "状态更新是异步的"]],
+    [
+      "li",
+      [
+        "p",
+        "React基于性能考虑，可能将多个",
+        ["code", "setState"],
+        "调用合并为一个"
+      ]
+    ],
+    [
+      "li",
+      [
+        "p",
+        "由于",
+        ["code", "this.props"],
+        "和",
+        ["code", "this.state"],
+        "的更新可能是异步的，不能依赖它们来进行",
+        ["code", "state"],
+        "状态的更新"
+      ]
+    ]
+  ],
+  ["p", "如下代码可能会执行失败"],
+  [
+    "pre",
+    { "lang": "js" },
+    [
+      "code",
+      "// Wrong\nthis.setState({\n  counter: this.state.counter + this.props.increment,\n});"
+    ]
+  ],
+  ["p", "可以使用如下写法来修复此问题"],
+  [
+    "pre",
+    { "lang": "js" },
+    [
+      "code",
+      "// Correct\nthis.setState((state, props) => ({\n  counter: state.counter + props.increment\n}));\n\n// Correct\nthis.setState(function(state, props) {\n  return {\n    counter: state.counter + props.increment\n  };\n});"
+    ]
+  ],
+  ["p", "然而以下代码仍然存在潜在的问题"],
+  [
+    "pre",
+    { "lang": "js" },
+    [
+      "code",
+      "// Capturing values from the state outside of the setState callback.\nlet previousFoo = this.state.foo;\nthis.setState(function incrementFoo(previousState) {\n    // BAD! Setting `foo` based on a potentially outdated\n    // view of its current value: `foo` may have been updated\n    // in the meantime by another call to `setState`.\n    return { ...previousState, foo: previousFoo + 10 };\n});"
+    ]
+  ],
+  ["p", "可以使用如下方法解决"],
+  [
+    "pre",
+    { "lang": "js" },
+    [
+      "code",
+      "function incrementFooBy(delta) {\n    return (previousState, currentProps) => {\n        return { ...previousState, foo: previousState.foo + delta };\n    };\n}\nclass MyComponent extends React.Component {\n    onClick = () => {\n        this.setState(incrementFooBy(42));\n    }\n    render() {\n        return <button onClick={onClick}>click me</button>;\n    }\n}"
+    ]
+  ],
+  ["p", "如下代码可演示", ["code", "setState"], "异步行为"],
+  [
+    "pre",
+    { "lang": "js" },
+    [
+      "code",
+      "import React from 'react';\nimport ReactDOM from 'react-dom';\n\nclass Clock extends React.Component {\n    constructor(props) {\n        super(props);\n        this.state = {\n            counter: 0,\n        };\n    }\n\n    componentDidMount() {\n        // Automatically update the state every 3 seconds.\n        setInterval(this.updateState, 3000);\n        // Update the state on mouse-down.\n        // --\n        // NOTE: We are implementing our own event binding here - not using the\n        // React Element props to manage the event handler.\n        document.getElementById('span')\n            .addEventListener(\"mousedown\", this.updateState)\n            ;\n    }\n\n    tick() {\n        this.setState({\n            date: this.state.date + 100000\n        });\n    }\n\n    updateState = (event) => {\n        console.log(\"= = = = = = = = = = = =\");\n        console.log(\"EVENT:\", (event ? event.type : \"timer\"));\n        console.log(\"Pre-setState:\", this.state.counter);\n        this.setState({\n            counter: (this.state.counter + 1)\n        });\n        console.log(\"Mid-setState:\", this.state.counter);\n        this.setState({\n            counter: (this.state.counter + 1)\n        });\n        console.log(\"Post-setState:\", this.state.counter);\n    }\n    render() {\n        return (\n            <div>\n                <span id=\"span\" onClick={this.updateState} className=\"button\">\"Counter at \" + {this.state.counter}</span>\n                <h1>Hello, world!</h1>\n            </div >\n        );\n    }\n}\n\nReactDOM.render(\n    <Clock />,\n    document.getElementById('root')\n);"
+    ]
+  ]
+]
