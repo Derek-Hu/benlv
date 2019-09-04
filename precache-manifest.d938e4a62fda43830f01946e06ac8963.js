@@ -12,12 +12,12 @@ self.__precacheManifest = [
     "url": "/benlv/static/js/resources.a3d0bab9.45de2b7f.chunk.js"
   },
   {
-    "revision": "9e7d46a30e9d4acc0484",
-    "url": "/benlv/static/js/index.b05201a7.9e7d46a3.chunk.js"
+    "revision": "2eca2041cf8f69eab57b",
+    "url": "/benlv/static/js/index.b05201a7.2eca2041.chunk.js"
   },
   {
-    "revision": "dacb55d0c473049add4e",
-    "url": "/benlv/static/js/3.dacb55d0.chunk.js"
+    "revision": "c460cd85e4fbc0e15bd5",
+    "url": "/benlv/static/js/3.c460cd85.chunk.js"
   },
   {
     "revision": "de8be4a5735b1e2baf17",
@@ -28,15 +28,15 @@ self.__precacheManifest = [
     "url": "/benlv/static/css/resources.a3d0bab9.53bc50fb.chunk.css"
   },
   {
-    "revision": "9e7d46a30e9d4acc0484",
+    "revision": "2eca2041cf8f69eab57b",
     "url": "/benlv/static/css/index.b05201a7.f4be8408.chunk.css"
   },
   {
-    "revision": "dacb55d0c473049add4e",
+    "revision": "c460cd85e4fbc0e15bd5",
     "url": "/benlv/static/css/3.dc615ba3.chunk.css"
   },
   {
-    "revision": "7ca8f564936ad79fd9e9e09a878b0110",
+    "revision": "900fa75ea1bfb3039a4fd250a434adbb",
     "url": "/benlv/index.html"
   }
 ];
