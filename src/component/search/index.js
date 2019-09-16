@@ -89,6 +89,19 @@ export default class Complete extends React.Component {
           margin: '0.5em auto'
         }}
       >
+        {/* <AutoComplete
+          className="certain-category-search"
+          dropdownClassName="certain-category-search-dropdown"
+          dropdownMatchSelectWidth={false}
+          dropdownStyle={{ width: 300 }}
+          size="large"
+          style={{ width: "100%" }}
+          dataSource={options}
+          placeholder="input here"
+          optionLabelProp="value"
+        >
+          <Input suffix={<Icon type="search" className="certain-category-icon" />} />
+        </AutoComplete> */}
         <AutoComplete
           className="global-search"
           size="large"
@@ -96,19 +109,15 @@ export default class Complete extends React.Component {
             width: '100%',
             paddingLeft: '5px'
           }}
+          dropdownMatchSelectWidth={false}
+          dropdownStyle={{ width: 300 }}
           dataSource={dataSource.map(renderOption)}
           onSelect={value => onSelect(value, props)}
           onSearch={this.handleSearch}
           placeholder="input here"
           optionLabelProp="text"
         >
-          <Input
-            suffix={
-              <Button className="search-btn" style={{ marginRight: -12 }} size="large" type="primary">
-                <Icon type="search" />
-              </Button>
-            }
-          />
+          <Input suffix={<Icon type="search" className="certain-category-icon" />} />
         </AutoComplete>
       </div>
     );

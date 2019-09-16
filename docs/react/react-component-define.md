@@ -1,5 +1,5 @@
 ---
-title: React Component
+title: Basic
 order: 1
 category: React
 keyword: React, JavaScript

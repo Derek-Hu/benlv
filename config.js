@@ -1,7 +1,7 @@
 const config = {
   env: {
     local: {
-      apiBase: ""
+      apiBase: "/"
     },
     production: {
       apiBase: "/benlv"
