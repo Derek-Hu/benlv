@@ -1,0 +1,158 @@
+body {
+  font-size: 15px;
+  max-width: 1300px;
+  font-family: proxima-nova, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Wenquanyi Micro Hei, WenQuanYi Micro Hei Mono, WenQuanYi Zen Hei, Apple LiGothic Medium, SimHei, ST Heiti,
+    WenQuanYi Zen Hei Sharp;
+  color: #666;
+  padding: 10px;
+  margin: 1em auto;
+  border: 0;
+}
+
+h1 {
+  text-align: center;
+  font-size: 18px;
+  color: #333;
+}
+
+pre.diff {
+  margin: 0;
+  padding: 0;
+}
+
+pre span.line {
+  position: absolute;
+  left: -2.5em;
+}
+
+pre span.row.red .indicator {
+  color: red;
+}
+
+pre span.row.green .indicator {
+  color: green;
+}
+
+pre span.row {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  width: 100%;
+  position: relative;
+}
+
+pre {
+  background: #fff;
+  border: 1px solid;
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier, monospace;
+}
+
+code {
+  display: block;
+  background-color: #000;
+  padding: 0.5em 3em;
+  overflow: scroll;
+}
+
+code,
+pre {
+  color: #aaa;
+}
+
+code.add {
+  color: #fff;
+}
+
+div.update .title {
+  color: #0f6ab4;
+}
+
+div.remove .title {
+  color: red;
+}
+
+div.add .title {
+  color: green;
+}
+
+p.controller {
+  color: #000;
+  font-size: 16px;
+  font-weight: normal;
+  margin: 0;
+}
+
+p.controller a {
+  color: #000;
+}
+
+p.controller a span {
+  color: #999;
+}
+
+a {
+  text-decoration: none;
+  color: green;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+li {
+  margin: 15px 0;
+}
+
+span.type {
+  color: #fff;
+  position: relative;
+}
+
+span.type,
+.detail {
+  padding: 4px;
+}
+
+span.type.add {
+  background-color: #10a54a;
+}
+
+span.type.update {
+  background-color: #0f6ab4;
+}
+
+span.type.remove {
+  background-color: red;
+}
+
+.panel-add > div,
+.detail.add {
+  background-color: #e7f6ec;
+  color: #000;
+}
+
+.panel-remove > div,
+.detail.remove {
+  background-color: #f5d9d9;
+}
+
+.panel-update > div,
+.detail.update {
+  color: #000;
+  background-color: #e7f0f7;
+}
+
+.reportSummary {
+  text-align: right;
+  font-size: 13px;
+  padding-bottom: 1em;
+}
+
+.reportSummary,
+.reportSummary a {
+  color: #999;
+}
+
+.reportSummary > div {
+  display: inline-block;
+}

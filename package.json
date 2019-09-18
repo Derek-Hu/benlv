@@ -13,7 +13,8 @@
     "start:production": "APP_NAME=production npm start",
     "start": "react-app-rewired start",
     "sort-package-json": "sort-package-json",
-    "github": "gh-pages -d build"
+    "github": "gh-pages -d build",
+    "test": "jest"
   },
   "husky": {
     "hooks": {
