@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon, Button, Input, AutoComplete } from 'antd';
 import './style.less';
+import { func } from 'prop-types';
 
 const { Option } = AutoComplete;
 
@@ -13,7 +14,10 @@ function onSelect(value, history) {
     // window.location.href = "";
   }
 }
-
+function match(value, key) {
+  debugger;
+  return value.toLowerCase().indexOf(key.toLowerCase()) !== -1;
+}
 const MaxMatch = 6;
 function searchResult(query, allData) {
   const titleMatchs = [];
@@ -24,13 +28,13 @@ function searchResult(query, allData) {
       if (titleMatchs.length >= MaxMatch) {
         return;
       }
-      if (element.metas.title && element.metas.title.indexOf(query) !== -1) {
+      if (element.metas.title && match(element.metas.title, query)) {
         titleMatchs.push(element);
       }
-      if (element.metas.summary && element.metas.summary.indexOf(query) !== -1) {
+      if (element.metas.summary && match(element.metas.summary, query)) {
         summaryMatch.push(element);
       }
-      if (element.metas.keyword && element.metas.keyword.indexOf(query) !== -1) {
+      if (element.metas.keyword && match(element.metas.keyword, query)) {
         keywordMatch.push(element);
       }
     });

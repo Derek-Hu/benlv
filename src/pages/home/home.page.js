@@ -21,8 +21,22 @@ export default class extends React.Component {
     });
     try {
       const metas = await getArticleList();
+      const books = metas.filter(m => m.metas.book).map(m => m.metas.path);
+      const articles = metas.filter(m => {
+        if (m.metas.book) {
+          return true;
+        }
+        const isBookArticles = books.some(book => {
+          return m.path.indexOf(book) === 0;
+        });
+        if (!isBookArticles) {
+          return true;
+        }
+        return false;
+      });
       this.setState({
-        metas
+        metas,
+        articles
       });
       this.setState({
         loading: false
@@ -35,7 +49,14 @@ export default class extends React.Component {
   };
 
   render() {
-    const { metas } = this.state;
+    const { metas, articles, loading, error } = this.state;
+    console.log('metas, articles', metas, articles);
+    if (loading) {
+      return <p style={{ padding: '1em' }}>加载中...</p>;
+    }
+    if (error) {
+      return <p style={{ padding: '1em' }}>加载失败！</p>;
+    }
     return (
       <>
         <Search data={metas} history={this.props.history} />
@@ -44,7 +65,7 @@ export default class extends React.Component {
             size="large"
             rowKey="id"
             itemLayout="vertical"
-            dataSource={metas}
+            dataSource={articles}
             renderItem={item => (
               <List.Item
                 key={item.id}
@@ -60,6 +81,15 @@ export default class extends React.Component {
                   title={
                     item.metas.isExternal ? (
                       <a target="_blank" without="true" rel="noopener noreferrer" href={item.metas.link}>
+                        {item.metas.title || '无标题'}
+                      </a>
+                    ) : item.metas.book ? (
+                      <a
+                        target="_blank"
+                        without="true"
+                        rel="noopener noreferrer"
+                        href={`/public/resources.html?path=${encodeURIComponent(item.metas.path)}`}
+                      >
                         {item.metas.title || '无标题'}
                       </a>
                     ) : (
