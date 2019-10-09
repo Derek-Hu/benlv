@@ -1,3 +1,3 @@
 import RenderDom from '~/entry';
-
-RenderDom(require.context('~/pages/home/', true, /\.js$/));
+import './mobx';
+// RenderDom(require.context("~/pages/home/", true, /\.js$/));

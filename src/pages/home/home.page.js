@@ -2,7 +2,7 @@ import React from 'react';
 import Controller from '~/decorator/Controller';
 import { Link } from 'react-router-dom';
 import { Card, List, Tag } from 'antd';
-import styles from './Articles.less';
+import styles from './Articles.module.less';
 import Search from '~/component/search';
 import { getArticleList } from '~/service/api';
 
@@ -106,9 +106,9 @@ export default class extends React.Component {
                     ) : null
                   }
                 />
-                {item.summary ? (
+                {item.metas.summary ? (
                   <div className={styles.listContent}>
-                    <div className={styles.description}>{item.summary}</div>
+                    <div className={styles.description}>{item.metas.summary}</div>
                   </div>
                 ) : null}
               </List.Item>

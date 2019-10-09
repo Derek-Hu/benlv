@@ -1,9 +1,10 @@
 import React from 'react';
 import Controller from '~/decorator/Controller';
-import { Card, Icon, Tag } from 'antd';
+import { Icon } from 'antd';
 import queryString from 'query-string';
 import styles from './style.module.less';
 import { Config } from '~/constant/config';
+import { Link } from 'react-router-dom';
 import { getArticleList } from '~/service/api';
 
 // 访问根路径时的内容
@@ -89,7 +90,16 @@ export default class extends React.Component {
           <ul>
             {menu.children.map(subMenu => (
               <li>
-                <a href="">{subMenu.metas.title}</a>
+                <Link
+                  to={{
+                    pathname: '/',
+                    search: '?sort=name',
+                    hash: '#the-hash',
+                    state: { fromDashboard: true }
+                  }}
+                >
+                  {subMenu.metas.title}
+                </Link>
               </li>
             ))}
           </ul>
@@ -98,7 +108,7 @@ export default class extends React.Component {
     } else {
       return (
         <li>
-          <a href="">{menu.metas.title}</a>
+          <Link href="">{menu.metas.title}</Link>
         </li>
       );
     }
