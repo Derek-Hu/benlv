@@ -19,5 +19,9 @@ module.exports = [
     entry: "src/entry/form-compare.js",
     template: "public/diff.html",
     outPath: "/public/diff.html"
+  },
+  {
+    entry: "src/entry/classic.js",
+    outPath: "/public/classic.html"
   }
 ];
