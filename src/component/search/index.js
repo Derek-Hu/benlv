@@ -15,7 +15,6 @@ function onSelect(value, history) {
   }
 }
 function match(value, key) {
-  debugger;
   return value.toLowerCase().indexOf(key.toLowerCase()) !== -1;
 }
 const MaxMatch = 6;
