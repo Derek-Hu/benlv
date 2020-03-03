@@ -1,17 +1,36 @@
 # Hooks
-React 16.8.0 开始支持Hooks，可以让开发人员使用Function来编写组件，需要注意的是，使用时需要安装相应的React DOM组件。React Hooks是编写React代码的一种方式，如果不喜欢它，可以暂时不用，它是向后兼容的。
+React 16.8.0 开始支持Hooks，可以让开发人员使用Function来编写组件，需要注意的是，使用时需要安装对应版本的React DOM组件。React Hooks是编写React代码的一种方式，如果不喜欢它，可以暂时不用，它是向后兼容的。
 
-## Hooks出现解决的问题
-在Hooks出现之前，为了复用组件的特性，需要对组件进行重构，并使用高阶组件来实现，随着高阶组件的嵌套层级加深，不利于代码的维护，因此需要一种更加简单清晰的方式，Hooks应运而生，它能更加便利的复用组件特性，且更能独立进行测试。
+## Hooks解决的痛点，为什么采用function而不是Class
+### 痛点一：难以在组件之间实现状态管理的复用
+在Hooks出现之前，为了复用状态管理逻辑，往往使用以下方法：
+* 属性渲染（Render Props）
+* 高阶组件（Higher-Order Components）
 
-另外，React生命周期函数的使用，导致某些逻辑分散在多个生命周期函数中，如`componentDidMount`和`componentDidUpdate`方法可能做着同样的事情，即逻辑代码可能出现2次；`componentDidMount`可能负责相关初始化的工作，`componentWillUnmount`可能进行清理工作。从而不能很好的体现功能的完整性，容易引入潜在的问题。
+为了达到复用的目的，需要对组件进行重新组织，同时随着高阶组件的嵌套层级加深，不利于代码的维护，在React DevTools中，会发现“嵌套地狱”，组件被层层providers，consumers，higher-order components，render props等包围着，虽然可以通过React DevTools进行过滤，却可以从中发现：我们需要一种更加简单清晰的方式，来复用状态管理逻辑。
 
-组件的状态管理与生命周期紧密联系，状态管理不易抽离与独立，这也是许多开发人员引入第三方的状态管理库的原因，而第三方库的引入，也让代码变得更加复杂。
+Hooks应运而生，优点是：
+* 能实现复用状态管理的可复用
+* 能独立进行测试
 
-## Hooks为什么采用function而不是Class
-经过实践发现，使用`class`时，需要理解`this`是如何工作的，在绑定事件时，需正确的处理`this`的指向；对于何时使用`function`和`class`，不同人的理解各不一样。
+### 痛点二：随着复杂度升高，组件业务逻辑越来越难以理解
+* 相同逻辑分散在多处。如`componentDidMount`和`componentDidUpdate`方法，可能做着同样的事情，即相同代码可能出现2次。
+* 不相关逻辑出现在同一方法中。如`componentDidMount`中常常包含初始化逻辑，不同逻辑往往相对独立。
+* 相关逻辑分散在不同方法。如`componentDidMount`可能负责相关初始化的工作，而`componentWillUnmount`需进行清理工作。
 
-与`class`相比，使用`function`可以对代码进行更好的优化，如代码压缩、预编译技术（`Ahead-of-time-compilation`）、[`Component Folding`](https://github.com/facebook/react/issues/7323)等，因此，Hooks拥抱`function`。
+总之，不能很好的体现功能的完整性，容易引入潜在的问题。
+
+组件业务逻辑复杂性增加，测试难以进行，质量难以保证，这也是许多人为什么会引入第三方状态管理库的原因，然而这些三方库往往引入其他内容进行抽象，开发人员往往在许多文件之间来回切换，组件的复用愈加麻烦。
+
+### 痛点三：Class的使用对于开发人员/工具并不友好
+
+除了代码的重新组织与复用难度较大，Class的存在也是一个障碍。
+* 在不同的框架/组件中，`this`代表着什么各不相同，你需要去记忆并理解它，正确的处理`this`的指向。比如在事件绑定上；在Class Properties语法糖出现之前，代码将很繁琐。
+* 对于何时使用Function Component与Class Component，不同开发人员常常意见不一，即使是经验丰富的人员。
+
+另外，当使用Class组件时，工具在优化代码上，往往使得最优化路径失效。例如Class组件在代码压缩时不理想，热加载时不稳定等，以及应用于Angular等框架中的AOT Compile，Prepack中的Component Folding技术。
+
+为了解决以上问题，Hooks拥抱Function组件，在Class组件中则不能使用。
 
 ## 初识Hooks
 ```js
@@ -33,11 +52,26 @@ function Example() {
   );
 }
 ```
-其中`useState`则是众多`Hooks`之一，它接收一个参数作为初始化状态数据，返回状态和一个更新状态的函数，如状态`count`和函数`setCount`；`useState`可多次调用，在多次渲染时，它仍会正确的保持相应的状态。
+其中`useState`则是众多`Hooks`之一，它接收一个参数作为初始化状态数据，返回当前状态以及一个更新状态的函数，如状态`count`和函数`setCount`；
 
-`Hooks`只能在`function`中使用，为了解决`function`组件中不能实现`state`管理和`lifecycle`生命周期管理而出现，相当于`function`中`state`和`lifecycle`的钩子，这也是取名为`Hooks`的由来。
+* 初始化数据不要求为Object类型，也可以是普通类型，如`number`， `string`等。初始化数据只会在第一次执行时被用上。
+* 更新状态的函数，如`setState`与Class中`this.setState`类似，区别是`setState`并不会对数据进行Merge合并操作。
 
-## 内在原理
+`useState`可多次调用，在多次渲染时，React会保证相应状态的正确性。
+
+### 什么是Hooks
+`Hooks`是指能在`function`，即我们认识的`stateless component`中使用，并能给`function`增加某些特性的函数。例如`React`中内置的`Hooks`，如：
+
+* `useState`解决了`function`组件不能支持`state`管理的问题，否则需要将`function`组件转化为`Class`组件才能支持`state`
+* `useEffect`则为`function`组件，添加了类似`Class`组件中的`LifeCycle`生命周期事件
+
+`Hooks`相当于`function`中的钩子，这也是取名为`Hooks`的由来。且每个`Hooks`调用都是独立的，因此我们可以在同一组件中调用同一`Hooks`多次。
+
+当然，我们可以创建自定义的`Hooks`，不过，如前文所述，`useState`中初始化数据只会执行一次，后续的渲染中，初始化数据并不会被用到，这也是为什么它不取名为`createState`，因为`create`并不能准备描述该行为。因此React约定：
+
+* `Hooks`的名称必须以`use`开头，这也是`Hooks`代码检测工具的约定，它能帮助我们发现`Hooks`在使用中的问题。
+
+### 内在原理
 Hooks是如何确保维护正确的状态`state`呢？如：
 ```js
 function Form() {
@@ -153,4 +187,5 @@ useEffect(updateTitle)     // 🔴 3 (but was 4). 执行updateTitle失败
 6. `useEffect`
 7. `useEffect`
 
-### useEffect
+## useEffect
+`useEffect`在DOM更新后将被执行，相当于`componentDidMount`和`componentDidUpdate`。React在每次渲染时都会执行`useEffect`
