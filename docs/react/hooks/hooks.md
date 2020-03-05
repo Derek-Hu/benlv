@@ -72,7 +72,29 @@ function Example() {
 * `Hooks`的名称必须以`use`开头，这也是`Hooks`代码检测工具的约定，它能帮助我们发现`Hooks`在使用中的问题。
 
 ### 内在原理
-Hooks是如何确保维护正确的状态`state`呢？如：
+
+在介绍原理之前，先说明下结论，在使用`Hooks`时，需要注意以下几点：
+
+* React在多次渲染`function`组件时，`setState`将被多次调用，为了能正确的让React处理`state`，不要将`Hooks`放置在条件函数、循环语句或者内嵌函数中，否则可能出现状态管理的异常，而应将`setState`， `useEffect`等`Hooks`执行放置在最外层。这不仅仅针对`setState`，还包括其他`Hooks`，如`useEffect`等。
+* `Hooks`只能在React `function`组件，或者自定义`hooks`中使用，请不要在普通的函数中使用。
+
+为了自定对以上规则进行检测，React提供了[`eslint-plugin-react-hooks`](https://www.npmjs.com/package/eslint-plugin-react-hooks)插件，只需集成到ESlint规则中即可。Create React App以及继承该插件。
+
+```json
+// Your ESLint configuration
+{
+  "plugins": [
+    // ...
+    "react-hooks"
+  ],
+  "rules": {
+    // ...
+    "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
+    "react-hooks/exhaustive-deps": "warn" // Checks effect dependencies
+  }
+}
+```
+一、Hooks是如何确保维护正确的状态`state`呢？如：
 ```js
 function Form() {
   // 1. Use the name state variable
@@ -164,12 +186,6 @@ useEffect(updateTitle)     // 🔴 3 (but was 4). 执行updateTitle失败
 
 ```
 
-因此，在使用`Hooks`时，需要注意以下几点：
-* React在多次渲染`function`组件时，`setState`将被多次调用，为了能正确的让React处理`state`，不要将`Hooks`放置在条件函数、循环语句或者内嵌函数中，否则可能出现状态管理的异常，而应将`setState`， `useEffect`等`Hooks`执行放置在最外层。这不仅仅针对`setState`，还包括其他`Hooks`，如`useEffect`等。
-* `Hooks`只能在React `function`组件，或者自定义`hooks`中使用，请不要在普通的函数中使用。
-
-为了自定对以上规则进行检测，React提供了[`eslint-plugin-react-hooks`](https://www.npmjs.com/package/eslint-plugin-react-hooks)插件，只需集成到ESlint规则中即可。
-
 ## 内置Hooks
 根据不同场景，React内置了许多不同的`Hooks`，当然，我们也可以定制自己的`Hooks`。
 
@@ -188,4 +204,126 @@ useEffect(updateTitle)     // 🔴 3 (but was 4). 执行updateTitle失败
 7. `useEffect`
 
 ## useEffect
-`useEffect`在DOM更新后将被执行，相当于`componentDidMount`和`componentDidUpdate`。React在每次渲染时都会执行`useEffect`
+`useEffect`在DOM更新后将被执行，相当于`componentDidMount`，`componentDidUpdate`和`componentWillUnmount`。
+
+`useEffect`可返回一个`clean`函数，该函数将在下次渲染前执行，我们可在该函数中进行清理工作。
+
+```js
+useEffect(() => {
+  // Do something...
+  return () => {
+    // 清理工作...
+  };
+});
+```
+### 为什么`useEffect`会在每次渲染都执行
+
+如下所示代码，初看下来并没有问题；但是当`friend`属性发生改变时：
+* 该组件展示当可能是另一个`friend.id`的状态
+* 存在内存泄漏或执行错误，因为组件卸载时，`unsubscribe`时传递的参数可能是错误的
+
+```js
+  componentDidMount() {
+    ChatAPI.subscribeToFriendStatus(
+      this.props.friend.id,
+      this.handleStatusChange
+    );
+  }
+
+  componentWillUnmount() {
+    ChatAPI.unsubscribeFromFriendStatus(
+      this.props.friend.id,
+      this.handleStatusChange
+    );
+  }
+```
+
+解决这个问题，需在`componentDidUpdate`中处理
+```js
+  componentDidMount() {
+    ChatAPI.subscribeToFriendStatus(
+      this.props.friend.id,
+      this.handleStatusChange
+    );
+  }
+
+  componentDidUpdate(prevProps) {
+    // Unsubscribe from the previous friend.id
+    ChatAPI.unsubscribeFromFriendStatus(
+      prevProps.friend.id,
+      this.handleStatusChange
+    );
+    // Subscribe to the next friend.id
+    ChatAPI.subscribeToFriendStatus(
+      this.props.friend.id,
+      this.handleStatusChange
+    );
+  }
+
+  componentWillUnmount() {
+    ChatAPI.unsubscribeFromFriendStatus(
+      this.props.friend.id,
+      this.handleStatusChange
+    );
+  }
+```
+
+这是Class组件中常犯的错误之一。如果使用`Hooks`，代码如下：
+```js
+function FriendStatus(props) {
+  // ...
+  useEffect(() => {
+    // ...
+    ChatAPI.subscribeToFriendStatus(props.friend.id, handleStatusChange);
+    return () => {
+      ChatAPI.unsubscribeFromFriendStatus(props.friend.id, handleStatusChange);
+    };
+  });
+  // ...
+}
+```
+`Hooks`并没有做特殊处理，是因为`Hooks`每次渲染前，都会执行`clean`函数，示例场景如下：
+```js
+// Mount with { friend: { id: 100 } } props
+ChatAPI.subscribeToFriendStatus(100, handleStatusChange);     // Run first effect
+
+// Update with { friend: { id: 200 } } props
+ChatAPI.unsubscribeFromFriendStatus(100, handleStatusChange); // Clean up previous effect
+ChatAPI.subscribeToFriendStatus(200, handleStatusChange);     // Run next effect
+
+// Update with { friend: { id: 300 } } props
+ChatAPI.unsubscribeFromFriendStatus(200, handleStatusChange); // Clean up previous effect
+ChatAPI.subscribeToFriendStatus(300, handleStatusChange);     // Run next effect
+
+// Unmount
+ChatAPI.unsubscribeFromFriendStatus(300, handleStatusChange); // Clean up last effect
+```
+### 如何避免`useEffect`每次渲染都执行
+有时候，没有必要每次都执行`useEffect`，而且每次执行也会带来性能损耗。
+
+在Class Component中，可以通过一下方法解决：
+```js
+componentDidUpdate(prevProps, prevState) {
+  if (prevState.count !== this.state.count) {
+    document.title = `You clicked ${this.state.count} times`;
+  }
+}
+```
+
+在`useEffect`中，则可以在第二个参数中，指定方法中的依赖，包括`props`和`state`;
+```js
+useEffect(() => {
+  function handleStatusChange(status) {
+    setIsOnline(status.isOnline);
+  }
+
+  ChatAPI.subscribeToFriendStatus(props.friend.id, handleStatusChange);
+  return () => {
+    ChatAPI.unsubscribeFromFriendStatus(props.friend.id, handleStatusChange);
+  };
+}, [props.friend.id]); // Only re-subscribe if props.friend.id changes
+```
+
+如果第二个参数中，数组为空，那么`useEffect`只会执行一次，相当于指定了`componentDidMount`和`componentWillUnmount`。
+
+我们可以通过`eslint-plugin-react-hooks`插件中开启`exhaustive-deps`规则来进行代码提示。
