@@ -80,7 +80,7 @@ function Example() {
 
 为了自定对以上规则进行检测，React提供了[`eslint-plugin-react-hooks`](https://www.npmjs.com/package/eslint-plugin-react-hooks)插件，只需集成到ESlint规则中即可。Create React App以及继承该插件。
 
-```json
+```js
 // Your ESLint configuration
 {
   "plugins": [
@@ -184,6 +184,15 @@ useState('Mary')           // 1. 读取/还原name变量值，并忽略初始化
 useState('Poppins')        // 🔴 2 (but was 3). 读取/还原变量surname失败
 useEffect(updateTitle)     // 🔴 3 (but was 4). 执行updateTitle失败
 
+```
+解决该问题的方法是，将判断条件加入到`Hooks`中，如下所示：
+```js
+useEffect(function persistForm() {
+  // 👍 We're not breaking the first rule anymore
+  if (name !== '') {
+    localStorage.setItem('formData', name);
+  }
+});
 ```
 
 ## 内置Hooks
