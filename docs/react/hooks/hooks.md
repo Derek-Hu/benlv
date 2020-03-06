@@ -194,25 +194,17 @@ useEffect(function persistForm() {
   }
 });
 ```
+## 自定义Hooks
+Q: 自定义的`Hooks`必须以`use`开头命名吗？
+A: 是的，这是一个约定，否则代码检测工具无法检测是否正确使用`Hooks`
+
+Q: 两个不同的组件，可以使用同一个Hooks共享状态吗？
+A: 不可以，每个Hooks的调用都是独立的
 
 ## 内置Hooks
 根据不同场景，React内置了许多不同的`Hooks`，当然，我们也可以定制自己的`Hooks`。
 
-### 基础Hooks
-1. `useState`
-2. `useEffect`
-3. `useContext`
-
-### 其他Hooks
-1. `useReducer`
-2. `useEffect`
-3. `useEffect`
-4. `useEffect`
-5. `useEffect`
-6. `useEffect`
-7. `useEffect`
-
-## useEffect
+### useEffect
 `useEffect`在DOM更新后将被执行，相当于`componentDidMount`，`componentDidUpdate`和`componentWillUnmount`。
 
 `useEffect`可返回一个`clean`函数，该函数将在下次渲染前执行，我们可在该函数中进行清理工作。
