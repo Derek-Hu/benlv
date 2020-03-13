@@ -207,7 +207,9 @@ A: 不可以，每个Hooks的调用都是独立的
 ### useEffect
 `useEffect`在DOM更新后将被执行，相当于`componentDidMount`，`componentDidUpdate`和`componentWillUnmount`。
 
-`useEffect`可返回一个`clean`函数，该函数将在下次渲染前执行，我们可在该函数中进行清理工作。
+`useEffect`可返回一个`clean`函数，该函数将在组件被卸载前执行，或者重新渲染时，在重新执行`useEffect`前执行，我们可在该函数中进行清理工作。
+
+与componentDidMount和componentDidUpdate不同，`useEffect`执行时间推迟在浏览器重绘后，React保证在浏览器重新渲染前，会执行上一次渲染后的`useEffect`
 
 ```js
 useEffect(() => {
@@ -328,3 +330,75 @@ useEffect(() => {
 如果第二个参数中，数组为空，那么`useEffect`只会执行一次，相当于指定了`componentDidMount`和`componentWillUnmount`。
 
 我们可以通过`eslint-plugin-react-hooks`插件中开启`exhaustive-deps`规则来进行代码提示。
+
+## useState
+useState可接收函数作为参数，如果返回值与之前相等(使用`Object.is`方法比对)，则不会触发更新
+```js
+setState(prevState => {
+  // Object.assign would also work
+  return {...prevState, ...updatedValues};
+});
+```
+
+### 延迟初始化状态
+如果初始化时比较复杂的，可以延迟计算。
+```js
+const [state, setState] = useState(() => {
+  const initialState = someExpensiveComputation(props);
+  return initialState;
+});
+
+```
+
+## useContext
+
+当最近的`<MyContext.Provider>`更新后，`useContext`会触发组件重新渲染，无论父组件是否使用`React.memo`或者设置`shouldComponentUpdate`，使用`useContext`的组件都会重新渲染。
+
+如果重新渲染时笨重的，可以考虑以下方法优化：
+
+Let's say for some reason you have AppContext whose value has a theme property, and you want to only re-render some ExpensiveTree on appContextValue.theme changes.
+
+TLDR is that for now, you have three options:
+
+#### Option 1 (Preferred): Split contexts that don't change together
+If we just need appContextValue.theme in many components but appContextValue itself changes too often, we could split ThemeContext from AppContext.
+```js
+function Button() {
+  let theme = useContext(ThemeContext);
+  // The rest of your rendering logic
+  return <ExpensiveTree className={theme} />;
+}
+```
+Now any change of AppContext won't re-render ThemeContext consumers.
+
+This is the preferred fix. Then you don't need any special bailout.
+
+#### Option 2: Split your component in two, put memo in between
+If for some reason you can't split out contexts, you can still optimize rendering by splitting a component in two, and passing more specific props to the inner one. You'd still render the outer one, but it should be cheap since it doesn't do anything.
+```js
+function Button() {
+  let appContextValue = useContext(AppContext);
+  let theme = appContextValue.theme; // Your "selector"
+  return <ThemedButton theme={theme} />
+}
+
+const ThemedButton = memo(({ theme }) => {
+  // The rest of your rendering logic
+  return <ExpensiveTree className={theme} />;
+});
+```
+#### Option 3: One component with useMemo inside
+Finally, we could make our code a bit more verbose but keep it in a single component by wrapping return value in useMemo and specifying its dependencies. Our component would still re-execute, but React wouldn't re-render the child tree if all useMemo inputs are the same.
+```js
+function Button() {
+  let appContextValue = useContext(AppContext);
+  let theme = appContextValue.theme; // Your "selector"
+
+  return useMemo(() => {
+    // The rest of your rendering logic
+    return <ExpensiveTree className={theme} />;
+  }, [theme])
+}
+```
+
+https://github.com/facebook/react/issues/15156#issuecomment-474590693
