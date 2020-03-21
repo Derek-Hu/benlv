@@ -1,0 +1,1 @@
+https://javascript.info/script-async-defer
