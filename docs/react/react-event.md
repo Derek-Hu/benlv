@@ -14,6 +14,14 @@ summary:
 - React 事件绑定使用驼峰式，HTML 中使用小写格式
 - React 使用函数指定事件处理，HTML 使用字符串形式
 
+Here, e is a synthetic event. React defines these synthetic events according to the W3C spec, so you don’t need to worry about cross-browser compatibility. See the SyntheticEvent reference guide to learn more.
+
+## SyntheticEvent
+
+React中组件绑定的事件都是SyntheticEvent的实例，对浏览器原生事件进行了包装，对外表现与原生事件有着相同对接口，符合W3C标准，包括stopPropagation() and preventDefault()方法。
+
+如果需要获取原生事件，可以通过属性nativeEvent访问
+
 ```html
 // HTML
 <button onclick="activateLasers()">
