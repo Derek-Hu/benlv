@@ -22,6 +22,10 @@ React中组件绑定的事件都是SyntheticEvent的实例，对浏览器原生�
 
 如果需要获取原生事件，可以通过属性nativeEvent访问
 
+The SyntheticEvent is pooled. This means that the SyntheticEvent object will be reused and all properties will be nullified after the event callback has been invoked. This is for performance reasons. As such, you cannot access the event in an asynchronous way.
+
+If you want to access the event properties in an asynchronous way, you should call event.persist() on the event, which will remove the synthetic event from the pool and allow references to the event to be retained by user code.
+
 ```html
 // HTML
 <button onclick="activateLasers()">
