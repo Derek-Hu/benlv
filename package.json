@@ -39,7 +39,7 @@
     "@babel/plugin-proposal-decorators": "^7.3.0",
     "antd": "^3.23.1",
     "antd-mobile": "^2.2.13",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "babel-plugin-import": "^1.11.0",
     "babel-polyfill": "^6.26.0",
     "circular-dependency-plugin": "^5.0.2",
