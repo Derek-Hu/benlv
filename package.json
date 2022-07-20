@@ -65,7 +65,7 @@
     "react-dom": "^16.8.6",
     "react-router-dom": "^4.4.0",
     "react-scripts": "2.0.3",
-    "terser": "3.14.1",
+    "terser": "4.8.1",
     "webpack-bundle-analyzer": "^3.3.2",
     "xxhashjs": "^0.2.2"
   },
